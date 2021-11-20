@@ -15,6 +15,29 @@ class imagesAPI {
     this.#totalPages = 1;
   }
 
+  async getImages() {
+    const axiosConfig = {
+      // image search
+      baseURL: 'https://pixabay.com/api/',
+
+      // pixabay options
+      params: {
+        key: `${process.env.API_KEY_IMAGES}`,
+        q: `${this.#query}`,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: 'true',
+
+        page: this.page,
+        per_page: this.perPage,
+      },
+    };
+
+    // `https://pixabay.com/api/?key=${process.env.API_KEY_IMAGES}&q=yellow+flowers&image_type=photo`
+    const { data } = await axios(axiosConfig);
+    return data;
+  }
+
   get query() {
     return this.#query;
   }
@@ -53,27 +76,6 @@ class imagesAPI {
 
   set totalPages(newTotalPages) {
     this.#totalPages = newTotalPages;
-  }
-
-  async getImages() {
-    const axiosConfig = {
-      baseURL: 'https://pixabay.com/api', // search images
-
-      // pixabay options
-      params: {
-        key: `${process.env.API_KEY_IMAGES}`,
-        q: `${this.#query}`,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: 'true',
-
-        page: this.page,
-        per_page: this.perPage,
-      },
-    };
-
-    const { data } = await axios(axiosConfig);
-    return data;
   }
 }
 
