@@ -1,0 +1,10 @@
+.header {
+  padding: 15px 0;
+  margin-bottom: 15px;
+  background-color: var(--color-header-bg);
+
+  @include mq($tablet) {
+    padding: 21px 0;
+    margin-bottom: 21px;
+  }
+}

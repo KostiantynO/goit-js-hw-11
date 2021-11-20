@@ -1,7 +1,6 @@
-/*
- * Главный файл стилей.
- * Все паршалы подключаются сюда.
- */
-
-// Стили для файла с примером HTML-фрагмента
-@import './example';
+// Главный файл стилей.
+@import './utils/indexing-file';
+@import './base/indexing-file';
+@import './components/indexing-file';
+@import './layout/indexing-file';
+@import './utils/is-hidden';

@@ -1,0 +1,14 @@
+.search__input {
+  font-size: clamp(1.7rem, 2.1vw, 2.1rem);
+  padding: 4px 21px 9px;
+  outline: none;
+
+  width: 100%;
+  border-radius: 5px;
+
+  &:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0.1rem 0.1rem 0.1rem 0.21rem
+      rgba(lighten($color-accent, 21), 0.7);
+  }
+}
