@@ -16,13 +16,14 @@ class imagesAPI {
   }
 
   async getImages() {
+    const KEY = '24385209-6a81cc27bd8e526ba32a03073';
+
     const axiosConfig = {
       // image search
       baseURL: 'https://pixabay.com/api/',
-
       // pixabay options
       params: {
-        key: `${process.env.API_KEY_IMAGES}`,
+        key: `${KEY}`,
         q: `${this.#query}`,
         image_type: 'photo',
         orientation: 'horizontal',
@@ -33,7 +34,7 @@ class imagesAPI {
       },
     };
 
-    // `https://pixabay.com/api/?key=${process.env.API_KEY_IMAGES}&q=yellow+flowers&image_type=photo`
+    // `https://pixabay.com/api/?key=${KEY}&q=yellow+flowers&image_type=photo`
     const { data } = await axios(axiosConfig);
     return data;
   }
