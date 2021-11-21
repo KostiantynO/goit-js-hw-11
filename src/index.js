@@ -10,30 +10,81 @@ import getRefs from './js/refs';
 import initModal from './js/modal';
 import smoothScrollAfterRender from './js/scroll';
 
+/*
+
+1. меньше 40 карточек показывать.
+2. показывать все картинки - вывести их.
+3. load more btn должна прятаться, а потом появляться снова
+
+*/
+
 const refs = getRefs();
 const DEBOUNCE_DELAY = 300;
 const DEBOUNCE_SETTINGS = { leading: true, trailing: false };
+const notifyOptions = {
+  timeout: 5000,
+};
 
 const imageAPI = new imagesAPI();
 
+const notifyStatus = imagesCount => {
+  if (imagesCount < 1) {
+    return Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.',
+      notifyOptions,
+    );
+  }
+
+  const { totalHits, page } = imageAPI;
+  if (totalHits > 0 && page === 1) {
+    Notify.success(`Hooray! We found ${totalHits} images.`, notifyOptions);
+  }
+};
+
 const fetchAndRenderImages = async () => {
   try {
-    const response = await imageAPI.getImages();
-    imageAPI.totalHits = response.totalHits;
-    imageAPI.totalPages = imageAPI.totalHits / imageAPI.perPage;
+    const { hits, totalHits } = await imageAPI.getImages();
 
-    if (response.hits.length < 1) {
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.',
-      );
-      return;
+    imageAPI.totalHits = totalHits;
+    imageAPI.totalPages = Math.ceil(imageAPI.totalHits / imageAPI.perPage);
+    imageAPI.currentlyLoaded = imageAPI.perPage * imageAPI.page;
+
+    notifyStatus(hits.length);
+
+    await UI.renderGallery(hits);
+    smoothScrollAfterRender(imageAPI.page);
+
+    console.log(
+      'total: ',
+      imageAPI.totalHits,
+      'loaded :',
+      imageAPI.currentlyLoaded,
+    );
+
+    if (imageAPI.totalHits > imageAPI.currentlyLoaded) {
+      const waitImgComplete = [...document.images]
+        .filter(img => !img.complete)
+        .map(img => new Promise(res => (img.onload = img.onerror = res)));
+
+      await Promise.all(waitImgComplete);
+      UI.show(refs.loadMoreBtn);
+
+      // Promise.all(
+      //   Array.from(document.images)
+      //     .filter(img => !img.complete)
+      //     .map(
+      //       img =>
+      //         new Promise(resolve => {
+      //           img.onload = img.onerror = resolve;
+      //         }),
+      //     ),
+      // ).then(() => {
+      //   console.log('images finished loading');
+      // });
     }
 
-    UI.renderGallery(response.hits);
-    UI.show(refs.loadMoreBtn);
-
-    if (imageAPI.page > 1) {
-      smoothScrollAfterRender();
+    if (imageAPI.totalHits <= imageAPI.currentlyLoaded) {
+      return showPopupEndOfResults();
     }
 
     imageAPI.page += 1;
@@ -44,18 +95,23 @@ const fetchAndRenderImages = async () => {
   }
 };
 
+const showPopupEndOfResults = () => {
+  Notify.info(
+    "We're sorry, but you've reached the end of search results.",
+    notifyOptions,
+  );
+};
+
 const onSubmitGetImages = async e => {
   e.preventDefault();
   UI.disable(refs.searchBtn);
+  UI.hide(refs.loadMoreBtn);
   UI.clearUI();
+
   imageAPI.query = e.target.elements.searchQuery.value.trim();
   imageAPI.page = 1;
 
   await fetchAndRenderImages();
-
-  if (imageAPI.totalHits > 0) {
-    Notify.success(`Hooray! We found ${imageAPI.totalHits} images.`);
-  }
 
   try {
     if (refs.modal) {
@@ -68,17 +124,8 @@ const onSubmitGetImages = async e => {
   }
 };
 
-const showAlertPopup = () => {
-  Notify.failure("We're sorry, but you've reached the end of search results.");
-};
-
 const onLoadMore = async e => {
   UI.hide(refs.loadMoreBtn);
-
-  // Check the end of the collection to display an alert
-  if (imageAPI.page >= imageAPI.totalPages) {
-    return showAlertPopup();
-  }
 
   await fetchAndRenderImages();
 
@@ -89,18 +136,16 @@ const onLoadMore = async e => {
   }
 };
 
-refs.searchForm.addEventListener(
-  'submit',
-  debounce(onSubmitGetImages, DEBOUNCE_DELAY, DEBOUNCE_SETTINGS),
-);
-
-refs.loadMoreBtn.addEventListener(
-  'click',
-  debounce(onLoadMore, DEBOUNCE_DELAY, DEBOUNCE_SETTINGS),
-);
-
 const onImageClick = async e => {
   e.preventDefault();
 };
 
+refs.searchForm.addEventListener(
+  'submit',
+  debounce(onSubmitGetImages, DEBOUNCE_DELAY, DEBOUNCE_SETTINGS),
+);
+refs.loadMoreBtn.addEventListener(
+  'click',
+  debounce(onLoadMore, DEBOUNCE_DELAY, DEBOUNCE_SETTINGS),
+);
 refs.gallery.addEventListener('click', onImageClick);

@@ -15,7 +15,8 @@
   border-radius: 5px;
 
   @include transition;
-  transition-property: transform, background-color, box-shadow;
+  transition-property: opacity, visibility, transform, background-color,
+    box-shadow;
 
   &:focus,
   &:hover {

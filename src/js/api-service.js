@@ -6,6 +6,7 @@ class imagesAPI {
   #perPage;
   #totalHits;
   #totalPages;
+  #currentlyLoaded;
 
   constructor() {
     this.#query = '';
@@ -13,6 +14,7 @@ class imagesAPI {
     this.#perPage = 40;
     this.#totalHits = 0;
     this.#totalPages = 1;
+    this.#currentlyLoaded = 0;
   }
 
   async getImages() {
@@ -77,6 +79,14 @@ class imagesAPI {
 
   set totalPages(newTotalPages) {
     this.#totalPages = newTotalPages;
+  }
+
+  get currentlyLoaded() {
+    return this.#currentlyLoaded;
+  }
+
+  set currentlyLoaded(newCurrentlyLoaded) {
+    this.#currentlyLoaded = newCurrentlyLoaded;
   }
 }
 
