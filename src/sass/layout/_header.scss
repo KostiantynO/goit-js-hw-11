@@ -1,8 +1,12 @@
 .header {
-  padding: 15px 0;
-  background-color: var(--color-header-bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
 
-  box-shadow: 0.11rem 0.11rem 0.5rem 0.1rem rgba(21, 21, 21, 0.21);
+  padding: 15px 0;
+
+  background: linear-gradient(180deg, rgba($color-accent, 0.21), transparent);
 
   @include mq($tablet) {
     padding: 21px 0;

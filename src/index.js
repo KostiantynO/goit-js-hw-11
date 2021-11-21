@@ -10,14 +10,6 @@ import getRefs from './js/refs';
 import initModal from './js/modal';
 import smoothScrollAfterRender from './js/scroll';
 
-/*
-
-1. меньше 40 карточек показывать.
-2. показывать все картинки - вывести их.
-3. load more btn должна прятаться, а потом появляться снова
-
-*/
-
 const refs = getRefs();
 const DEBOUNCE_DELAY = 300;
 const DEBOUNCE_SETTINGS = { leading: true, trailing: false };
@@ -25,19 +17,25 @@ const notifyOptions = {
   timeout: 5000,
 };
 
+refs.main.style.marginTop = `${refs.header.clientHeight}px`;
+
 const imageAPI = new imagesAPI();
 
 const notifyStatus = imagesCount => {
   if (imagesCount < 1) {
-    return Notify.failure(
+    Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.',
       notifyOptions,
     );
+    return 1;
   }
 
-  const { totalHits, page } = imageAPI;
-  if (totalHits > 0 && page === 1) {
-    Notify.success(`Hooray! We found ${totalHits} images.`, notifyOptions);
+  if (imageAPI.totalHits > 0 && imageAPI.page === 1) {
+    Notify.success(
+      `Hooray! We found ${imageAPI.totalHits} images.`,
+      notifyOptions,
+    );
+    return 0;
   }
 };
 
@@ -49,17 +47,10 @@ const fetchAndRenderImages = async () => {
     imageAPI.totalPages = Math.ceil(imageAPI.totalHits / imageAPI.perPage);
     imageAPI.currentlyLoaded = imageAPI.perPage * imageAPI.page;
 
-    notifyStatus(hits.length);
+    if (notifyStatus(hits.length)) return;
 
     await UI.renderGallery(hits);
     smoothScrollAfterRender(imageAPI.page);
-
-    console.log(
-      'total: ',
-      imageAPI.totalHits,
-      'loaded :',
-      imageAPI.currentlyLoaded,
-    );
 
     if (imageAPI.totalHits > imageAPI.currentlyLoaded) {
       const waitImgComplete = [...document.images]
@@ -68,19 +59,6 @@ const fetchAndRenderImages = async () => {
 
       await Promise.all(waitImgComplete);
       UI.show(refs.loadMoreBtn);
-
-      // Promise.all(
-      //   Array.from(document.images)
-      //     .filter(img => !img.complete)
-      //     .map(
-      //       img =>
-      //         new Promise(resolve => {
-      //           img.onload = img.onerror = resolve;
-      //         }),
-      //     ),
-      // ).then(() => {
-      //   console.log('images finished loading');
-      // });
     }
 
     if (imageAPI.totalHits <= imageAPI.currentlyLoaded) {
