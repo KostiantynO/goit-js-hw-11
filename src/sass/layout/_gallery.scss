@@ -31,7 +31,7 @@
   box-shadow: 0.1rem 0.1rem 0.21rem 0.1rem rgba($color-brand, 0.21);
 
   @include transition;
-  transition-property: transform, box-shadow;
+  transition-property: transform, filter, box-shadow;
 
   @include mq($tablet) {
     gap: 1rem;
@@ -101,7 +101,7 @@
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0, transparent);
   opacity: 0.01;
 
-  transition: 0.1s var(--cubic);
+  @include transition;
   transition-property: transform, opacity, visibility;
 
   @include mq($tablet) {
