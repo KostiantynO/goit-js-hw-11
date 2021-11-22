@@ -23,6 +23,16 @@
   align-items: center;
   gap: 0.5rem;
 
+  background: rgba(#0057b7, 0.21);
+
+  // #0057b7	#ffd700
+
+  border-radius: 5px;
+  box-shadow: 0.1rem 0.1rem 0.21rem 0.1rem rgba($color-brand, 0.21);
+
+  @include transition;
+  transition-property: transform, box-shadow;
+
   @include mq($tablet) {
     gap: 1rem;
 
@@ -37,20 +47,10 @@
     flex-basis: calc((100% - 3 * 16px) / 4);
   }
 
-  background: rgba(#0057b7, 0.21);
-
-  // #0057b7	#ffd700
-
-  border-radius: 5px;
-  box-shadow: 0.1rem 0.1rem 0.21rem 0.1rem rgba($color-brand, 0.21);
-
-  @include transition;
-  transition-property: transform, box-shadow;
-
   &:hover,
   &:focus-within {
     transform: scale(1.021);
-
+    filter: brightness(121%);
     box-shadow: 0.12rem 0.12rem 0.5rem 0.15rem rgba($color-brand, 0.5);
   }
 }
