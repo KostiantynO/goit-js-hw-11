@@ -5,6 +5,7 @@ const getRefs = () => ({
   loadMoreBtn: document.querySelector('[data-load-more]'),
   header: document.querySelector('.header'),
   main: document.querySelector('main'),
+  modal: null,
 });
 
 export default getRefs;

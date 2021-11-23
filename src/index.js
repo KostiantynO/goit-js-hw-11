@@ -11,10 +11,12 @@ import initModal from './js/modal';
 import smoothScrollAfterRender from './js/scroll';
 
 const refs = getRefs();
+refs.modal = initModal('.gallery a');
+
 const DEBOUNCE_DELAY = 300;
 const DEBOUNCE_SETTINGS = { leading: true, trailing: false };
 const notifyOptions = {
-  timeout: 5000,
+  timeout: 4000,
 };
 
 refs.main.style.marginTop = `${refs.header.clientHeight}px`;
@@ -52,6 +54,10 @@ const fetchAndRenderImages = async () => {
     await UI.renderGallery(hits);
     smoothScrollAfterRender(imageAPI.page);
 
+    refs.modal.refresh();
+
+    console.log('fetchAndRenderImages ~ refs.modal', refs.modal);
+
     if (imageAPI.totalHits > imageAPI.currentlyLoaded) {
       const waitImgComplete = [...document.images]
         .filter(img => !img.complete)
@@ -68,8 +74,6 @@ const fetchAndRenderImages = async () => {
     imageAPI.page += 1;
   } catch (error) {
     console.error(error);
-  } finally {
-    UI.enable(refs.searchBtn);
   }
 };
 
@@ -83,6 +87,9 @@ const showPopupEndOfResults = () => {
 const onSubmitGetImages = async e => {
   e.preventDefault();
   UI.disable(refs.searchBtn);
+
+  setTimeout(() => UI.enable(refs.searchBtn), 800);
+
   UI.hide(refs.loadMoreBtn);
   UI.clearUI();
 
@@ -90,28 +97,12 @@ const onSubmitGetImages = async e => {
   imageAPI.page = 1;
 
   await fetchAndRenderImages();
-
-  try {
-    if (refs.modal) {
-      refs.modal.destroy();
-    }
-
-    refs.modal = initModal('.gallery a');
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 const onLoadMore = async e => {
   UI.hide(refs.loadMoreBtn);
 
   await fetchAndRenderImages();
-
-  try {
-    refs.modal.refresh();
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 const onImageClick = async e => {

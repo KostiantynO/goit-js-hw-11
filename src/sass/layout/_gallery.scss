@@ -1,6 +1,6 @@
-// .gallery { }
+// .gallery-section { }
 
-.gallery__list {
+.gallery {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -23,15 +23,11 @@
   align-items: center;
   gap: 0.5rem;
 
-  background: rgba(#0057b7, 0.21);
+  background: rgba($color-white, 0.21);
 
   // #0057b7	#ffd700
 
   border-radius: 5px;
-  box-shadow: 0.1rem 0.1rem 0.21rem 0.1rem rgba($color-brand, 0.21);
-
-  @include transition;
-  transition-property: transform, filter, box-shadow;
 
   @include mq($tablet) {
     gap: 1rem;
@@ -42,40 +38,42 @@
   @include mq($desktop) {
     flex-basis: calc((100% - 2 * 16px) / 3);
   }
+}
 
-  @include mq($l-desktop) {
-    flex-basis: calc((100% - 3 * 16px) / 4);
-  }
+.photo-card {
+}
+
+.gallery__link {
+  contain: content;
+  position: relative;
+  display: block;
+  cursor: zoom-in;
+
+  @include transition;
+  transition-property: transform, box-shadow;
 
   &:hover,
   &:focus-within {
     transform: scale(1.021);
-    filter: brightness(121%);
     box-shadow: 0.12rem 0.12rem 0.5rem 0.15rem rgba($color-brand, 0.5);
   }
 }
 
-.photo-card {
-  flex-grow: 1;
-  contain: content;
-  position: relative;
-}
-
-.gallery__thumb {
-  height: 100%;
-  contain: content;
-  max-height: 35vh;
-}
-
-.gallery__link {
-  height: 100%;
-  display: block;
-  cursor: zoom-in;
-}
+// .gallery__thumb {}
 
 .gallery__image {
-  height: 100%;
+  object-fit: fill;
+  // max-height: 55vh;
   border-radius: 5px 5px 0 0;
+  box-shadow: 0.1rem 0.1rem 0.21rem 0.1rem rgba($color-brand, 0.21);
+
+  @include transition;
+  transition-property: filter;
+
+  .gallery__link:hover &,
+  .gallery__link:focus-within & {
+    filter: brightness(121%);
+  }
 }
 
 .info {
@@ -98,8 +96,8 @@
   pointer-events: none;
   visibility: hidden;
 
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0, transparent);
   opacity: 0.01;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0, transparent);
 
   @include transition;
   transition-property: transform, opacity, visibility;
@@ -108,8 +106,8 @@
     padding: 1.5rem 0.7rem 1.5rem 3rem;
   }
 
-  .gallery__item:hover &,
-  .gallery__item:focus-within & {
+  .gallery__link:hover &,
+  .gallery__link:focus-within & {
     pointer-events: initial;
     visibility: visible;
     opacity: 1;
