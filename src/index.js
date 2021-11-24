@@ -96,6 +96,9 @@ const onSubmitGetImages = async e => {
   imageAPI.query = e.target.elements.searchQuery.value.trim();
   imageAPI.page = 1;
 
+  if (imageAPI.query === '')
+    return Notify.info('Please fill in the search field');
+
   await fetchAndRenderImages();
 };
 
